@@ -27,7 +27,7 @@ async def archive() -> None:
     for link in result:
         link_id = link['id']
         link_url = link['url']
-        link_description = link['description']
+        link_notes = link['notes']
         link_title = link['title']
         link_tags = link['tag_names']
 
@@ -65,7 +65,7 @@ async def archive() -> None:
         updated_bookmark = await client.bookmarks.async_update(
             link_id,
             tag_names=link_tags,
-            description="[Archived " + archive_url + "/" + output_file + "] " + link_description
+            notes="[Archived on " + archive_date_readable + "](" + archive_url + "/" + output_file + ")\n" + link_notes
         )
 
 asyncio.run(archive())

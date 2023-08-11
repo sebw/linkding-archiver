@@ -14,7 +14,7 @@ This container image allows this.
 - it searches your Linkding for links with a "trigger tag" that you define (e.g. `to_archive`)
 - if bookmarks are found with that tag, SingleFile processes the links and saves the single HTML under `/archives` on the container filesystem (configure as a persistent volume!)
 - when processed bookmarks are edited
-  - link to the archive is added to the original description (e.g.: `file:///home/user/archives/1234_20200101_120000.html` or `https://archive.example.com/1234_20200101_120000.html`)
+  - link to the archive is added to the notes (e.g.: `file:///home/user/archives/1234_20200101_120000.html` or `https://archive.example.com/1234_20200101_120000.html`)
   - the trigger tag is removed
   - the tag `linkding-archiver` is added
 - an (optional) notification is sent to Pushover (it uses the [apprise](https://github.com/caronc/apprise) library)
@@ -49,7 +49,7 @@ sudo docker run -d \
     -e PUSHOVER_USER=abc \
     -e PUSHOVER_TOKEN=xyz \
     -v /some/local/folder/archives:/archives \
-    ghcr.io/sebw/linkding-archiver:0.1
+    ghcr.io/sebw/linkding-archiver:0.5
 ```
 
 ## Exposing your archives
