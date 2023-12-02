@@ -1,20 +1,26 @@
 # Linkding Archiver
 
-[Linkding](https://github.com/sissbruecker/linkding) is a bookmark aggregator.
+[Linkding](https://github.com/sissbruecker/linkding) is a bookmark aggregator with neat browser integrations.
 
-[SingleFile](https://github.com/gildas-lormeau/SingleFile) provides an easy way to archive web pages in a single HTML file (embedding pictures!).
+[SingleFile](https://github.com/gildas-lormeau/SingleFile) provides an easy way to archive web pages in a single portable HTML file (embedding pictures!).
 
-Linkding integrates with the wayback machine (archive.org) but what if you wanted to host your own archive collection?
+[Tube Archivist](https://github.com/tubearchivist/tubearchivist) allows you to archive, organize, search and self host your Youtube collections.
+
+Linkding provides archiving possibilities with the wayback machine (archive.org).
+
+But what if you wanted to host your own archive collections?
 
 This container image allows this.
 
 ## How does it work?
 
 - this container will query your Linkding instance every hour
-- it searches your Linkding for links with a "trigger tag" that you define (e.g. `to_archive`)
-- if bookmarks are found with that tag, SingleFile processes the links and saves the single HTML under `/archives` on the container filesystem (configure as a persistent volume!)
+- it searches your Linkding for links with a "trigger tag" that you define (e.g. `archivethisplz`, I personally chose the very  simple `a` tag, unlikely to conflict with other tags)
+- if bookmarks are found with your trigger tag, we will check if it's a Youtube link or any other link
+- if it's a Youtube link and if you have a Tube Archivist (TA) instance, we will archive the video in TA.
+- if the bookmark is not a Youtube link (or it's a Youtube link but you don't have a TA instance), SingleFile will process the link and save the HTML file under `/archives` on the container filesystem (configure as a persistent volume!)
 - when processed bookmarks are edited
-  - link to the archive is added to the notes (e.g.: `file:///home/user/archives/1234_20200101_120000.html` or `https://archive.example.com/1234_20200101_120000.html`)
+  - link to the archive (TA or SingleFile HTML) is added to the notes
   - the trigger tag is removed
   - the tag `linkding-archiver` is added
 - an (optional) notification is sent to Pushover (it uses the [apprise](https://github.com/caronc/apprise) library)
@@ -39,8 +45,12 @@ This container image allows this.
 
 `PUSHOVER_TOKEN` (optional) is your Pushover application token, if you want to get notified when a link is processed
 
+`TUBE_URL` (optional) is your Tube Archivist instance
+
+`TUBE_TOKEN` (optional) is the token to your Tube Archivist instance
+
 ```bash
-sudo docker run -d \
+docker run -d \
     --name=linkding-archiver \
     -e LINKDING_URL=https://linkding.example.org \
     -e LINKDING_TOKEN=abc \
@@ -48,11 +58,13 @@ sudo docker run -d \
     -e ARCHIVE_URL=https://archive.example.org \
     -e PUSHOVER_USER=abc \
     -e PUSHOVER_TOKEN=xyz \
+    -e TUBE_URL=tube.example.org \
+    -e TUBE_TOKEN=abcd \
     -v /some/local/folder/archives:/archives \
-    ghcr.io/sebw/linkding-archiver:0.5
+    ghcr.io/sebw/linkding-archiver:0.6
 ```
 
-## Exposing your archives
+## Exposing your SingleFile archives
 
 If you want to expose your archives, you can use the `nginx` container image mounted to the same local folder:
 
@@ -65,7 +77,7 @@ docker run -d --restart unless-stopped --name linkding-archiver-site -p 80:80 -v
 ```bash
 git clone https://github.com/sebw/linkding-archiver
 cd linkding-archiver
-docker build . -t linkding-archiver:0.1
+docker build . -t linkding-archiver:0.6
 ```
 
 ## Troubleshooting
