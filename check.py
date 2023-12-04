@@ -100,10 +100,10 @@ async def archive() -> None:
             now = datetime.now()
             archive_date_readable = now.strftime("%Y-%m-%d %H:%M:%S")
 
-            archive_url = "https://" + tube_url + "/video/" + video_id
+            videoarchive_url = "https://" + tube_url + "/video/" + video_id
 
             # Logging
-            print(archive_date_readable + " [Bookmark ID " + str(link_id) + "] Archived video " + link_url + " at " + archive_url)
+            print(archive_date_readable + " [Bookmark ID " + str(link_id) + "] Archived video " + link_url + " at " + videoarchive_url)
 
             # Update the bookmark:
             link_tags.remove(linkding_tag)
@@ -111,7 +111,7 @@ async def archive() -> None:
             updated_bookmark = await client.bookmarks.async_update(
                 link_id,
                 tag_names=link_tags,
-                notes="[Video archived on " + archive_date_readable + "](" + archive_url + ")\n" + link_notes
+                notes="[Video archived on " + archive_date_readable + "](" + videoarchive_url + ")\n" + link_notes
             )
 
         # Process non Youtube links (or Youtube links if we don't have a Tube Archivist instance) with SingleFile
