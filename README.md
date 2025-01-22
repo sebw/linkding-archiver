@@ -12,6 +12,9 @@ But what if you wanted to host your own archive collections?
 
 This container image allows this.
 
+**UPDATE 2024**: Linkding has introduced local archiving also based on SingleFile.  
+This project is no longer maintained (unless security issue) and I suggest you have a look at the "sissbruecker/linkding:latest-plus" Docker image.
+
 ## How does it work?
 
 - this container will query your Linkding instance every hour
